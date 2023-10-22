@@ -1,41 +1,47 @@
 package DataStructure.Tree;
 
+import DataStructure.ShallowOrDeepCopy;
 import DataStructure.Exceptions.BinaryTreeException;
 
-public class BinarySearchTree<T extends Comparable<T>> implements Cloneable {
-
-    private NodeBilateral<T> root;
-
-    public BinarySearchTree() { root = null; }
-
-    public BinarySearchTree(T data) throws BinaryTreeException {
-        insert(data);
+public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTree<T> {
+    public BinarySearchTree() { super(); }
+    
+    public BinarySearchTree(T data) {
+        super(data);
     }
 
-    protected BinarySearchTree(BinarySearchTree<T> model) throws BinaryTreeException {
-        if(model == null) throw new BinaryTreeException("BinarySearchTree model is null");
-        this.root = model.root;
+    private BinarySearchTree(BinarySearchTree<T> model) { 
+        if(model == null) throw new IllegalArgumentException("BinarySearchTree model is null");
+        this.root = insertTree(model.root);
     }
 
-    public void insert(T data) throws BinaryTreeException {
-        if(data == null) throw new BinaryTreeException("the data cannot be null");
+    private NodeBilateral<T> insertTree(NodeBilateral<T> current) {
+        if(current == null) return null;
+        NodeBilateral<T> node = new NodeBilateral<T>(current.getData());
+        node.setLeft(insertTree(current.getLeft()));
+        node.setRight(insertTree(current.getRight()));
+        return node;
+    }
+
+    public void insert(T data) {
+        if(data == null) throw new IllegalArgumentException("the data cannot be null");
 
         if(root == null) {
-            root = new NodeBilateral<T>(data);
+            root = new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data));
             return;
         }
         NodeBilateral<T> current = root;
         
         while(true) {
-            if(current.compareTo(data) < 0) {
+            if(current.getData().compareTo(data) < 0) {
                 if(current.getLeft() == null) {
-                    current.setLeft(new NodeBilateral<T>(data));
+                    current.setLeft(new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
                     return;
                 }
                 current = current.getLeft();
             } else {
                 if(current.getRight() == null) {
-                    current.setRight(new NodeBilateral<T>(data));
+                    current.setRight(new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
                     return;
                 }
                 current = current.getRight();
@@ -43,8 +49,79 @@ public class BinarySearchTree<T extends Comparable<T>> implements Cloneable {
         }
     }
 
-    public boolean exist(T data) throws BinaryTreeException {
-        if(data == null) throw new BinaryTreeException("the data cannot be null");
+    public T search(T data) {
+        if(data == null) throw new IllegalArgumentException("the data cannot be null");
+        if(root == null) return null;
+
+        NodeBilateral<T> current = root;
+
+        while(true) {
+            int compare = current.getData().compareTo(data);
+
+            if(compare == 0) return current.getData();
+            if(compare < 0) {
+                if(current.getLeft() == null) return null;
+                current = current.getLeft();
+            }
+            else {
+                if(current.getRight() == null) return null;
+                current = current.getRight();
+            }
+        }
+    }
+
+    public void remove(T data) throws BinaryTreeException {
+        if(data == null) throw new IllegalArgumentException("the data cannot be null");
+        if(root == null) throw new BinaryTreeException("the tree is empty");
+        
+        NodeBilateral<T> previous = root;
+        NodeBilateral<T> current = root;
+
+        while(true) {
+            int compare = current.getData().compareTo(data);
+            previous = current;
+
+            if(compare < 0) {
+                if(current.getLeft() == null) throw new BinaryTreeException("the data is not in the tree");
+                current = current.getLeft();
+            } else if(compare > 0) {
+                if(current.getRight() == null) throw new BinaryTreeException("the data is not in the tree");
+                current = current.getRight();
+            }
+
+            if(current.getLeft() == null && current.getRight() == null) {
+                if(previous.getData().compareTo(data) < 0) previous.setLeft(null);
+                else previous.setRight(null);
+            }
+            insertAll(current);
+        }
+    }
+
+    public void insertAll(NodeBilateral<T> current) {
+        if(current == null) return;
+
+        if(current.getLeft() == null && current.getRight() == null) {
+            insert(current.getData());
+            return;
+        }
+        if(current.getLeft() == null && current.getRight() != null) {
+            insert(current.getData());
+            insertAll(current.getRight());
+            return;
+        }
+        if(current.getLeft() != null && current.getRight() == null) {
+            insert(current.getData());
+            insertAll(current.getLeft());
+            return;
+        }
+
+        insert(current.getData());
+        insertAll(current.getLeft());
+        insertAll(current.getRight());
+    }
+
+    public boolean exist(T data) {
+        if(data == null) throw new IllegalArgumentException("the data cannot be null");
         if(root == null) return false;
 
         NodeBilateral<T> current = root;
@@ -63,25 +140,13 @@ public class BinarySearchTree<T extends Comparable<T>> implements Cloneable {
        }                                
     }
 
-    public int size() {
-        if(root == null) return 0;
-        return size(root);
-    }
-    private int size(NodeBilateral<T> current) {
-        if(current == null) return 0;
-        if(current.getLeft() == null && current.getRight() == null) return 1;
-        return 1 + size(current.getLeft()) + size(current.getRight());
-    }
-
     @Override
-    public int hashCode() {
-        if(root == null) return 0;
-        return hashCode(root);
-    }
-    private int hashCode(NodeBilateral<T> current) {
-        if(current == null) return 2;
-        if(current.getLeft() == null && current.getRight() == null) return current.hashCode();
-        return 3 * hashCode(current.getLeft()) + hashCode(current.getRight()) + current.getData().hashCode();
+    public BinarySearchTree<T> clone() throws CloneNotSupportedException {
+        try {
+            return new BinarySearchTree<T>(this);
+        } catch (Exception e) {
+            throw new CloneNotSupportedException(e.getMessage());
+        }
     }
 
     @Override
@@ -105,12 +170,6 @@ public class BinarySearchTree<T extends Comparable<T>> implements Cloneable {
 
         if(currentThis.getData().compareTo(currentTree.getData()) != 0) return false;
 
-        return equals(currentThis.getLeft(), currentTree.getRight()) && equals(currentThis.getRight(), currentTree.getRight());
-    }
-
-    @Override
-    public String toString() {
-        if(root == null) return "{ }";
-        return root.toString();
+        return equals(currentThis.getLeft(), currentTree.getLeft()) && equals(currentThis.getRight(), currentTree.getRight());
     }
 }

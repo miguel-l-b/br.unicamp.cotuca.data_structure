@@ -1,15 +1,14 @@
 package DataStructure.Tree;
 
-import DataStructure.Exceptions.BinaryTreeException;
-
+import DataStructure.ShallowOrDeepCopy;
 public class NodeBilateral<T extends Comparable<T>> implements Cloneable, Comparable<T> {
     private T data;
 
     private NodeBilateral<T> left;
     private NodeBilateral<T> right;
 
-    public NodeBilateral(T data) throws BinaryTreeException {
-        if(data == null) throw new BinaryTreeException("the data cannot be null");
+    public NodeBilateral(T data) {
+        if(data == null) throw new IllegalArgumentException("the data cannot be null");
         this.data = data;
         left = null;
         right = null;
@@ -21,8 +20,8 @@ public class NodeBilateral<T extends Comparable<T>> implements Cloneable, Compar
         this.right = right;
     }
 
-    protected NodeBilateral(NodeBilateral<T> model) throws BinaryTreeException {
-        if(model == null) throw new BinaryTreeException("NodeBilateral model is null");
+    protected NodeBilateral(NodeBilateral<T> model) {
+        if(model == null) throw new IllegalArgumentException("NodeBilateral model is null");
         this.data = model.data;
         this.left = model.left;
         this.right = model.right;
@@ -33,7 +32,7 @@ public class NodeBilateral<T extends Comparable<T>> implements Cloneable, Compar
         return this.data.compareTo(data);
     }
 
-    public T getData() { return this.data; }
+    public T getData() { return (T) ShallowOrDeepCopy.verifyAndCopy(data); }
     public NodeBilateral<T> getLeft() { return left; }
     public NodeBilateral<T> getRight() { return right; }
     
