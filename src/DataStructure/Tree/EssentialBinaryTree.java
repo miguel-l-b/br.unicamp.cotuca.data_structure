@@ -47,6 +47,27 @@ public class EssentialBinaryTree<T extends Comparable<T>> implements Cloneable {
     return isMirror(current1.getLeft(), current2.getRight()) && isMirror(current1.getRight(), current2.getLeft());
   }
 
+  protected void insertSubTreeIn(NodeBilateral<T> subTree, NodeBilateral<T> root) {
+    NodeBilateral<T> current = root;
+    while(true) {
+        int compare = subTree.getData().compareTo(current.getData());
+
+        if(compare > 0) {
+            if(current.getLeft() == null) {
+                current.setLeft(subTree);
+                return;
+            }
+            current = current.getLeft();
+        } else {
+            if(current.getRight() == null) {
+                current.setRight(subTree);
+                return;
+            }
+            current = current.getRight();
+        }
+    }
+}
+
   @Override
   public int hashCode() {
       if(root == null) return 0;
@@ -75,4 +96,14 @@ public class EssentialBinaryTree<T extends Comparable<T>> implements Cloneable {
       toString(level+1, current.getLeft(), "L--- ")+
       toString(level+1, current.getRight(), "R--- ");
   }
+
+  protected boolean equals(NodeBilateral<T> currentThis, NodeBilateral<T> currentTree) {
+    if(currentThis == null && currentTree != null) return false;
+    if(currentThis != null && currentTree == null) return false;
+    if(currentThis == null && currentTree == null) return true;
+
+    if(currentThis.getData().compareTo(currentTree.getData()) != 0) return false;
+
+    return equals(currentThis.getLeft(), currentTree.getLeft()) && equals(currentThis.getRight(), currentTree.getRight());
+}
 }

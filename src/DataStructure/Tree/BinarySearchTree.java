@@ -33,7 +33,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         NodeBilateral<T> current = root;
         
         while(true) {
-            if(current.getData().compareTo(data) < 0) {
+            if(current.getData().compareTo(data) > 0) {
                 if(current.getLeft() == null) {
                     current.setLeft(new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
                     return;
@@ -59,7 +59,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
             int compare = current.getData().compareTo(data);
 
             if(compare == 0) return current.getData();
-            if(compare < 0) {
+            if(compare > 0) {
                 if(current.getLeft() == null) return null;
                 current = current.getLeft();
             }
@@ -79,21 +79,40 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
 
         while(true) {
             int compare = current.getData().compareTo(data);
-            previous = current;
+            
+            if(compare == 0) {
+                if(previous.getLeft().getData().compareTo(data) == 0) {
+                    if(current.getLeft() == null)
+                        previous.setLeft(current.getRight());
+                    else if(current.getRight() == null)
+                        previous.setLeft(current.getLeft());
+                    else {
+                        previous.setLeft(current.getLeft());
+                        insertSubTreeIn(current.getRight(), previous);
+                    }
+                }
+                else if(previous.getRight().getData().compareTo(data) == 0) {
+                    if(current.getLeft() == null)
+                        previous.setRight(current.getRight());
+                    else if(current.getRight() == null)
+                        previous.setRight(current.getLeft());
+                    else {
+                        previous.setRight(current.getRight());
+                        insertSubTreeIn(current.getLeft(), previous);
+                    }
+                }
 
-            if(compare < 0) {
-                if(current.getLeft() == null) throw new BinaryTreeException("the data is not in the tree");
-                current = current.getLeft();
-            } else if(compare > 0) {
-                if(current.getRight() == null) throw new BinaryTreeException("the data is not in the tree");
-                current = current.getRight();
+                return;
+            } else {
+                previous = current;
+                if(compare > 0) {
+                    if(current.getLeft() == null) throw new BinaryTreeException("the data is not in the tree");
+                    current = current.getLeft();
+                } else {
+                    if(current.getRight() == null) throw new BinaryTreeException("the data is not in the tree");
+                    current = current.getRight();
+                }
             }
-
-            if(current.getLeft() == null && current.getRight() == null) {
-                if(previous.getData().compareTo(data) < 0) previous.setLeft(null);
-                else previous.setRight(null);
-            }
-            insertAll(current);
         }
     }
 
@@ -129,7 +148,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
             int compare = current.compareTo(data);
             if(compare == 0) return true;
             
-            if(compare < 0) {
+            if(compare > 0) {
                 if(current.getLeft() == null) return false;
                 current = current.getLeft();
             }
@@ -162,14 +181,5 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         NodeBilateral<T> currentThis = this.root;
         NodeBilateral<T> currentTree = tree.root;
         return equals(currentThis, currentTree);
-    }
-    private boolean equals(NodeBilateral<T> currentThis, NodeBilateral<T> currentTree) {
-        if(currentThis == null && currentTree != null) return false;
-        if(currentThis != null && currentTree == null) return false;
-        if(currentThis == null && currentTree == null) return true;
-
-        if(currentThis.getData().compareTo(currentTree.getData()) != 0) return false;
-
-        return equals(currentThis.getLeft(), currentTree.getLeft()) && equals(currentThis.getRight(), currentTree.getRight());
     }
 }
