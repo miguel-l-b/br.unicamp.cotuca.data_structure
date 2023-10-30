@@ -5,16 +5,22 @@ import DataStructure.Tree.BinarySearchTree;
 public class App {
     public static void main(String[] args) {
         try {
-            BinarySearchTree<Integer> tree = new BinarySearchTree<>();
-            Random randomGenerate = new Random();
+            BinarySearchTree<Integer> tree = new BinarySearchTree<>(10);
+            
+            tree.insert(6);
+            tree.insert(7);
+            tree.insert(3);
+            tree.insert(4);
+            tree.insert(5);
+            tree.insert(2);
+            tree.insert(1);
+            tree.insert(9);
+            tree.insert(8);
 
-            System.out.println("incluindo...");
-            for(int i = 0; i < 100000; i++) tree.insert(randomGenerate.nextInt());
-
-            System.out.println("incluindo!");
-            long init = System.currentTimeMillis();
             System.out.println(tree);
-            System.out.println("ToString() demorou: "+(System.currentTimeMillis()-init)+"ms");
+            tree.remove(7);
+            System.out.println("===============");
+            System.out.println(tree);
         } catch (Exception e) {
             e.printStackTrace();
         }
