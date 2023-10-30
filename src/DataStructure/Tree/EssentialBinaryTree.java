@@ -71,12 +71,19 @@ public class EssentialBinaryTree<T extends Comparable<T>> implements Cloneable {
   @Override
   public int hashCode() {
       if(root == null) return 0;
-      return hashCode(root);
+      int hash = hashCode(root, 10);
+      if(hash < 0)
+        return hash * -1;
+      return hash;
   }
-  private int hashCode(NodeBilateral<T> current) {
-      if(current == null) return 2;
-      if(current.getLeft() == null && current.getRight() == null) return current.hashCode();
-      return 3 * hashCode(current.getLeft()) + hashCode(current.getRight()) + current.getData().hashCode();
+
+  private int hashCode(NodeBilateral<T> current, int hash) {
+      if(current == null) return 0;
+      if(current.getLeft() == null && current.getRight() == null) return 3 * hash + current.getData().hashCode();
+      if(current.getLeft() == null && current.getRight() != null) return (hash = 3 * hash + current.getData().hashCode()) + hashCode(current.getRight(), hash);
+      if(current.getLeft() != null && current.getRight() == null) return (hash = 3 * hash + current.getData().hashCode()) + hashCode(current.getLeft(), hash);
+
+      return (hash = 3 * hash + current.getData().hashCode()) + hashCode(current.getLeft(), hash) + hashCode(current.getRight(), hash);
   }
 
   @Override
