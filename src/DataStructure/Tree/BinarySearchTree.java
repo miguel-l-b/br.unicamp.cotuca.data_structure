@@ -15,9 +15,9 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         this.root = insertTree(model.root);
     }
 
-    private NodeBilateral<T> insertTree(NodeBilateral<T> current) {
+    private Node<T> insertTree(Node<T> current) {
         if(current == null) return null;
-        NodeBilateral<T> node = new NodeBilateral<T>(current.getData());
+        Node<T> node = new Node<T>(current.getData());
         node.setLeft(insertTree(current.getLeft()));
         node.setRight(insertTree(current.getRight()));
         return node;
@@ -27,21 +27,21 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         if(data == null) throw new IllegalArgumentException("the data cannot be null");
 
         if(root == null) {
-            root = new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data));
+            root = new Node<T>((T) ShallowOrDeepCopy.verifyAndCopy(data));
             return;
         }
-        NodeBilateral<T> current = root;
+        Node<T> current = root;
         
         while(true) {
             if(current.getData().compareTo(data) > 0) {
                 if(current.getLeft() == null) {
-                    current.setLeft(new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
+                    current.setLeft(new Node<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
                     return;
                 }
                 current = current.getLeft();
             } else {
                 if(current.getRight() == null) {
-                    current.setRight(new NodeBilateral<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
+                    current.setRight(new Node<T>((T) ShallowOrDeepCopy.verifyAndCopy(data)));
                     return;
                 }
                 current = current.getRight();
@@ -53,7 +53,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         if(data == null) throw new IllegalArgumentException("the data cannot be null");
         if(root == null) return null;
 
-        NodeBilateral<T> current = root;
+        Node<T> current = root;
 
         while(true) {
             int compare = current.getData().compareTo(data);
@@ -74,8 +74,8 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         if(data == null) throw new IllegalArgumentException("the data cannot be null");
         if(root == null) throw new BinaryTreeException("the tree is empty");
         
-        NodeBilateral<T> previous = root;
-        NodeBilateral<T> current = root;
+        Node<T> previous = root;
+        Node<T> current = root;
 
         while(true) {
             int compare = current.getData().compareTo(data);
@@ -116,7 +116,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         }
     }
 
-    public void insertAll(NodeBilateral<T> current) {
+    public void insertAll(Node<T> current) {
         if(current == null) return;
 
         if(current.getLeft() == null && current.getRight() == null) {
@@ -143,7 +143,7 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
         if(data == null) throw new IllegalArgumentException("the data cannot be null");
         if(root == null) return false;
 
-        NodeBilateral<T> current = root;
+        Node<T> current = root;
        while(true) {
             int compare = current.compareTo(data);
             if(compare == 0) return true;
@@ -178,8 +178,8 @@ public class BinarySearchTree<T extends Comparable<T>> extends EssentialBinaryTr
 
         if(this.root == null && tree.root == null) return true;
         
-        NodeBilateral<T> currentThis = this.root;
-        NodeBilateral<T> currentTree = tree.root;
+        Node<T> currentThis = this.root;
+        Node<T> currentTree = tree.root;
         return equals(currentThis, currentTree);
     }
 }
