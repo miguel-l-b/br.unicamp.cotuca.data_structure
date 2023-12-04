@@ -176,4 +176,19 @@ public class LinkedListCirculate<X> implements IEssentialLinkedList<X> {
     return array;
   }
 
+  @Override
+  public void add(X data) throws LinkedListException {
+    if(data == null)
+      throw new LinkedListException("Data is null");
+
+    Node<X> newNode = new Node<>(data);
+    if(this.isEmpty())
+      this.first = this.last = newNode;
+    else {
+      this.last.setNext(newNode);
+      this.last = newNode;
+    }
+    this.last.setNext(this.first);
+  }
+
 }

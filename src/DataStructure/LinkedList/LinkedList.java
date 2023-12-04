@@ -264,4 +264,9 @@ public class LinkedList<X> implements IEssentialLinkedList<X> {
         try { return new LinkedList<X>(this);}
         catch (LinkedListException e) { throw new CloneNotSupportedException(e.getMessage()); }
     }
+
+    @Override
+    public void add(X data) throws LinkedListException {
+        this.addIntoFirst(data);
+    }
 }

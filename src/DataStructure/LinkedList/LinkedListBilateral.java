@@ -132,4 +132,8 @@ public class LinkedListBilateral<X> implements IEssentialLinkedList<X> {
       array[index++] = current.getData();
     return array;
   }
+  @Override
+  public void add(X data) throws LinkedListException {
+    this.addIntoFirst(data);
+  }
 }
